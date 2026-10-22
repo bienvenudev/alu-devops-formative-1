@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "crop": "beans",
+    "market": "Kimironko",
+    "price_rwf_per_kg": 810,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 2,
+    "crop": "maize",
+    "market": "Kimironko",
+    "price_rwf_per_kg": 470,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 3,
+    "crop": "irish potatoes",
+    "market": "Kimironko",
+    "price_rwf_per_kg": 380,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 4,
+    "crop": "tomatoes",
+    "market": "Kimironko",
+    "price_rwf_per_kg": 640,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 5,
+    "crop": "cassava",
+    "market": "Kimironko",
+    "price_rwf_per_kg": 300,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 6,
+    "crop": "beans",
+    "market": "Nyabugogo",
+    "price_rwf_per_kg": 850,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 7,
+    "crop": "maize",
+    "market": "Nyabugogo",
+    "price_rwf_per_kg": 510,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 8,
+    "crop": "irish potatoes",
+    "market": "Nyabugogo",
+    "price_rwf_per_kg": 420,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 9,
+    "crop": "tomatoes",
+    "market": "Nyabugogo",
+    "price_rwf_per_kg": 680,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 10,
+    "crop": "cassava",
+    "market": "Nyabugogo",
+    "price_rwf_per_kg": 340,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 11,
+    "crop": "beans",
+    "market": "Musanze",
+    "price_rwf_per_kg": 750,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 12,
+    "crop": "maize",
+    "market": "Musanze",
+    "price_rwf_per_kg": 410,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 13,
+    "crop": "irish potatoes",
+    "market": "Musanze",
+    "price_rwf_per_kg": 320,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 14,
+    "crop": "tomatoes",
+    "market": "Musanze",
+    "price_rwf_per_kg": 580,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 15,
+    "crop": "cassava",
+    "market": "Musanze",
+    "price_rwf_per_kg": 240,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 16,
+    "crop": "beans",
+    "market": "Huye",
+    "price_rwf_per_kg": 830,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 17,
+    "crop": "maize",
+    "market": "Huye",
+    "price_rwf_per_kg": 490,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 18,
+    "crop": "irish potatoes",
+    "market": "Huye",
+    "price_rwf_per_kg": 400,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 19,
+    "crop": "tomatoes",
+    "market": "Huye",
+    "price_rwf_per_kg": 660,
+    "date": "2026-10-20"
+  },
+  {
+    "id": 20,
+    "crop": "cassava",
+    "market": "Huye",
+    "price_rwf_per_kg": 320,
+    "date": "2026-10-20"
+  }
+]
