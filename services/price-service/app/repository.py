@@ -1,7 +1,8 @@
 import json
+from datetime import date
 from pathlib import Path
 
-from app.models import Price
+from app.models import Price, PriceReport
 
 DATA_FILE = Path(__file__).parent / "data" / "prices.json"
 
@@ -20,3 +21,16 @@ class PriceRepository:
         if market:
             results = [p for p in results if p.market.lower() == market.lower()]
         return results
+
+    def cheapest(self, crop: str) -> Price | None:
+        matches = self.list_prices(crop=crop)
+        return min(matches, key=lambda p: p.price_rwf_per_kg) if matches else None
+
+    def add(self, report: PriceReport) -> Price:
+        price = Price(
+            id=max((p.id for p in self._prices), default=0) + 1,
+            date=date.today().isoformat(),
+            **report.model_dump(),
+        )
+        self._prices.append(price)
+        return price
