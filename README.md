@@ -15,6 +15,8 @@ Isoko (Kinyarwanda for "market") puts crop prices from several markets in one si
 - Adeline - Repository setup (.gitignore, CODEOWNERS) and setup documentation
 - Olive - Project documentation and planning board
 
+Team roles, task tracker and meeting notes: [Team participation sheet](https://docs.google.com/spreadsheets/d/11OBOj6M3XrjWutGWa4VsuiRcg5KcznN2TqAo1Bzfnmw/edit?usp=sharing)
+
 ## Project Overview
 
 Isoko is a small REST API that serves crop prices per market. A user can list prices, filter by crop and market, find the cheapest market for a crop, and report a new price.
@@ -45,7 +47,7 @@ The prices in the sample data are illustrative, not real market prices.
 | Frontend | None yet (API with interactive docs at `/docs`) |
 | Database | JSON file with sample data (a real database is planned) |
 | Testing | pytest |
-| Other | Git and GitHub (Projects, branch protection, pull requests). Docker and CI/CD are planned for Formative 2. |
+| Other | Git and GitHub (Projects, branch protection, pull requests). Docker and CI/CD are planned as next steps. |
 
 ## Getting Started
 
@@ -86,7 +88,7 @@ curl "http://127.0.0.1:8000/prices?crop=beans&market=Kimironko"
 curl "http://127.0.0.1:8000/prices/cheapest?crop=maize"
 ```
 
-More detail, including testing and troubleshooting, is in `docs/setup.md`.
+More detail, including testing and troubleshooting, is in [docs/setup.md](docs/setup.md).
 
 ## Running the Tests
 
@@ -109,9 +111,10 @@ pytest
 ├── LICENSE
 └── README.md
 ```
+
 ## Collaboration and Repository Security
 
-**Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, branches must be up to date before merging, conversations must be resolved, and the rules apply to administrators too. This prevents accidental direct pushes and makes sure every change is reviewed.
+**Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, conversations must be resolved, and the rules apply to administrators too. The "require branches to be up to date" rule only takes effect together with required status checks, so it will apply once CI exists. This prevents accidental direct pushes and makes sure every change is reviewed.
 
 **Required status checks:** not enabled yet, because there is no CI pipeline. They will be added in Formative 2 once GitHub Actions runs the tests.
 
@@ -123,7 +126,8 @@ pytest
 
 - [Project Board](https://github.com/users/bienvenudev/projects/4)
 - [Setup documentation](docs/setup.md)
-- License
+- [Team participation sheet](https://docs.google.com/spreadsheets/d/11OBOj6M3XrjWutGWa4VsuiRcg5KcznN2TqAo1Bzfnmw/edit?usp=sharing)
+- [License](LICENSE)
 
 ## License
 

@@ -358,3 +358,16 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/node,python,visualstudiocode,windows
 # JetBrains IDE files
 .idea/
+# macOS
+.DS_Store
+
+# Keys and certificates
+*.pem
+*.key
+*.p12
+
+# Terraform state (infrastructure work to come)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
