@@ -1,69 +1,38 @@
-# [Project Name]
+# Isoko
 
-> [One-line tagline describing your project]
+> Know the price before you go to market.
 
 ## African Context
 
-[Explain what problem this solves and why it matters in an African context]
+Smallholder farmers and small traders in Rwanda often sell and buy without knowing what the same crop costs in other markets such as Kimironko, Nyabugogo, Musanze or Huye. Without that information they can be underpaid, or travel far for a price that was not worth the trip. Price information exists but is scattered and hard to compare quickly.
+
+Isoko (Kinyarwanda for "market") puts crop prices from several markets in one simple service, so people can compare prices and decide where to buy or sell.
 
 ## Team Members
 
-- [Name] - [Role] - [Student ID]
-- [Name] - [Role] - [Student ID]
-- [Name] - [Role] - [Student ID]
+- Bienvenu - Team Lead, price service core, repository security
+- Victor - Backend: cheapest-market, price reporting, tests
+- Adeline - Repository setup (.gitignore, CODEOWNERS) and setup documentation
+- Olive - Project documentation and planning board
 
 ## Project Overview
 
-[2-3 paragraph description of what this application does]
+Isoko is a small REST API that serves crop prices per market. A user can list prices, filter by crop and market, find the cheapest market for a crop, and report a new price.
 
-### Target Users
-[Who will use this application?]
+The first version is intentionally small. It runs on sample data and is built as a separate price service, so that later versions can add an SMS/USSD gateway and price alerts as their own services, and the whole system can be containerized and deployed to the cloud.
 
-### Core Features
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
+The prices in the sample data are illustrative, not real market prices.
 
-## Technology Stack
+## Target Users
 
-- **Backend**: [e.g., Python/Django, Node.js/Express]
-- **Frontend**: [e.g., React, Vue, or vanilla JavaScript]
-- **Database**: [e.g., PostgreSQL, MongoDB]
-- **Other**: [Any other key technologies]
+- Smallholder farmers and farmer cooperatives deciding where to sell.
+- Market traders and small retailers comparing buying prices.
+- Households comparing food prices across markets.
 
-## Getting Started
+## Core Features
 
-### Prerequisites
-- [e.g., Python 3.9+, Node.js 16+]
-- [Any other requirements]
-
-### Installation
-
-1. Clone the repository
-```bash
-   git clone [your-repo-url]
-   cd [repo-name]
-```
-
-2. [Step-by-step setup instructions]
-
-3. Run the application
-```bash
-   [command to run]
-```
-
-### Usage
-
-[How to use the application - include examples if applicable]
-
-## Project Structure
-[Show your directory structure]
-
-## Links
-
-- [Project Board](link-to-github-projects)
-- [Documentation](if applicable)
-
-## License
-
-[e.g., MIT License]
+- **View prices:** list crop prices per market.
+- **Filter:** narrow results by crop and market.
+- **Cheapest market:** find where a crop is cheapest.
+- **Report a price:** add a new price observation with validation.
+- **Planned:** access via USSD/SMS for users without smartphones.
