@@ -109,3 +109,22 @@ pytest
 ├── LICENSE
 └── README.md
 ```
+## Collaboration and Repository Security
+
+**Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, branches must be up to date before merging, conversations must be resolved, and the rules apply to administrators too. This prevents accidental direct pushes and makes sure every change is reviewed.
+
+**Required status checks:** not enabled yet, because there is no CI pipeline. They will be added in Formative 2 once GitHub Actions runs the tests.
+
+**Secrets:** `.gitignore` excludes `.env` files, keys and local config so credentials are never committed.
+
+**Workflow:** every change is made on a branch, linked to an issue (`Closes #n`), and reviewed by a teammate.
+
+## Links
+
+- [Project Board](https://github.com/users/bienvenudev/projects/4)
+- [Setup documentation](docs/setup.md)
+- License
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
