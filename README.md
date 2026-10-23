@@ -36,3 +36,76 @@ The prices in the sample data are illustrative, not real market prices.
 - **Cheapest market:** find where a crop is cheapest.
 - **Report a price:** add a new price observation with validation.
 - **Planned:** access via USSD/SMS for users without smartphones.
+
+## Technology Stack
+
+| Area | Details |
+| --- | --- |
+| Backend | Python 3.10+, FastAPI, Uvicorn |
+| Frontend | None yet (API with interactive docs at `/docs`) |
+| Database | JSON file with sample data (a real database is planned) |
+| Testing | pytest |
+| Other | Git and GitHub (Projects, branch protection, pull requests). Docker and CI/CD are planned for Formative 2. |
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10 or newer
+- git
+
+### Installation
+
+1. Clone the repository:
+
+	```bash
+	git clone https://github.com/bienvenudev/alu-devops-formative-1.git
+	cd alu-devops-formative-1/services/price-service
+	```
+
+2. Create a virtual environment and install dependencies:
+
+	```bash
+	python3 -m venv venv
+	source venv/bin/activate
+	pip install -r requirements.txt
+	```
+
+### Run the Application
+
+```bash
+uvicorn app.main:app --reload
+```
+
+## Usage
+
+Open <http://127.0.0.1:8000/docs> to try the API, or use curl:
+
+```bash
+curl "http://127.0.0.1:8000/prices?crop=beans&market=Kimironko"
+curl "http://127.0.0.1:8000/prices/cheapest?crop=maize"
+```
+
+More detail, including testing and troubleshooting, is in `docs/setup.md`.
+
+## Running the Tests
+
+```bash
+cd services/price-service
+pytest
+```
+
+## Project Structure
+
+```text
+.
+├── .github/                  # CODEOWNERS and PR template
+├── docs/                     # Setup documentation
+├── services/
+│   └── price-service/        # Price API (one service, more planned)
+│       ├── app/              # Routes, models, repository, sample data
+│       ├── tests/            # pytest tests
+│       └── requirements.txt
+├── LICENSE
+└── README.md
+```
