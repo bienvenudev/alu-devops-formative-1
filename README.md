@@ -114,7 +114,7 @@ pytest
 
 ## Collaboration and Repository Security
 
-**Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, branches must be up to date before merging, conversations must be resolved, and the rules apply to administrators too. This prevents accidental direct pushes and makes sure every change is reviewed.
+**Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, conversations must be resolved, and the rules apply to administrators too. The "require branches to be up to date" rule only takes effect together with required status checks, so it will apply once CI exists. This prevents accidental direct pushes and makes sure every change is reviewed.
 
 **Required status checks:** not enabled yet, because there is no CI pipeline. They will be added in Formative 2 once GitHub Actions runs the tests.
 
