@@ -94,6 +94,7 @@ More detail, including testing and troubleshooting, is in [docs/setup.md](docs/s
 
 ```bash
 cd services/price-service
+pip install -r requirements-dev.txt
 pytest
 ```
 
@@ -107,7 +108,8 @@ pytest
 │   └── price-service/        # Price API (one service, more planned)
 │       ├── app/              # Routes, models, repository, sample data
 │       ├── tests/            # pytest tests
-│       └── requirements.txt
+│       ├── requirements.txt       # runtime dependencies
+│       └── requirements-dev.txt   # tests and linting
 ├── LICENSE
 └── README.md
 ```

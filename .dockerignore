@@ -1,0 +1,37 @@
+# Version control and CI
+.git
+.github
+
+# Secrets and local config (never bake these into an image)
+.env
+.env.*
+
+# Python caches and virtual environments
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+venv
+.venv
+
+# Not needed at runtime
+docs
+tests
+**/tests
+requirements-dev.txt
+**/requirements-dev.txt
+ruff.toml
+README.md
+.gitignore
+**/pytest.ini
+LICENSE
+
+# Docker files themselves
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Editors and OS files
+.idea
+.vscode
+.DS_Store

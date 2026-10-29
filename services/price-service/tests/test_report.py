@@ -12,4 +12,5 @@ def test_report_price_rejects_non_positive_price(client):
 
 
 def test_report_price_rejects_missing_market(client):
-    assert client.post("/prices", json={"crop": "beans", "price_rwf_per_kg": 500}).status_code == 422
+    payload = {"crop": "beans", "price_rwf_per_kg": 500}
+    assert client.post("/prices", json=payload).status_code == 422

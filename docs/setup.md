@@ -49,8 +49,12 @@ The API runs at `http://127.0.0.1:8000`. Interactive documentation is at `http:/
 
 ### Running the tests
 
+The tests and the linter need the extra development packages:
+
 ```bash
+pip install -r requirements-dev.txt
 pytest
+ruff check .
 ```
 
 ### Usage
