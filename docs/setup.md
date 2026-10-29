@@ -54,7 +54,7 @@ The tests and the linter need the extra development packages:
 ```bash
 pip install -r requirements-dev.txt
 pytest
-ruff check ../..
+ruff check .
 ```
 
 ### Usage
