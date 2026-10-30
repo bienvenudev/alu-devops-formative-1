@@ -33,3 +33,21 @@ jobs:
       - run: pip install -r services/price-service/requirements-dev.txt
       - run: pytest
         working-directory: services/price-service
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          tags: isoko-price-service:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Smoke test the container
+        run: |
+          docker run -d --name isoko -p 8000:8000 isoko-price-service:ci
+          curl --retry 10 --retry-delay 2 --retry-connrefused --fail http://127.0.0.1:8000/health
