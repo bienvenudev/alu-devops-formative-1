@@ -10,7 +10,7 @@ services:
     ports:
       - "${HOST_PORT:-8000}:8000"
     volumes:
-      - price_data:/app/services/price-service/app/data
+      - price_data:/app/app/data
     networks:
       - isoko
     healthcheck:
