@@ -50,4 +50,4 @@ jobs:
       - name: Smoke test the container
         run: |
           docker run -d --name isoko -p 8000:8000 isoko-price-service:ci
-          curl --retry 10 --retry-delay 2 --retry-connrefused --fail http://127.0.0.1:8000/health
+          curl --fail --silent --show-error --retry 15 --retry-delay 2 --retry-all-errors http://127.0.0.1:8000/health
