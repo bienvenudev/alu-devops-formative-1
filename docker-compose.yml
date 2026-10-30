@@ -1,0 +1,33 @@
+services:
+  price-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: isoko-price-service:local
+    restart: unless-stopped
+    environment:
+      UVICORN_LOG_LEVEL: ${UVICORN_LOG_LEVEL:-info}
+    ports:
+      - "${HOST_PORT:-8000}:8000"
+    volumes:
+      - price_data:/app/services/price-service/app/data
+    networks:
+      - isoko
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+networks:
+  isoko:
+    driver: bridge
+
+volumes:
+  price_data:
+    name: isoko_price_data
