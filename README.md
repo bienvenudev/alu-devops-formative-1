@@ -98,18 +98,84 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
+## Running with Docker
+
+### Prerequisites
+
+- Docker Desktop (Windows/macOS) or Docker Engine with the Compose plugin (Linux)
+- Check the installation: `docker --version` and `docker compose version`
+
+### Start the service
+
+From the repository root:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+On Windows Command Prompt use `copy .env.example .env`. The `.env` file is optional and never committed.
+
+The API is then available at <http://127.0.0.1:8000/docs>.
+
+### Check that it works
+
+```bash
+curl http://127.0.0.1:8000/health
+docker compose ps
+```
+
+The first command returns `{"status":"ok"}`. `docker compose ps` shows the container as `healthy` after a few seconds.
+
+### Stop the service
+
+```bash
+docker compose down
+```
+
+Use `docker compose down -v` to also delete the data volume.
+
+### Settings
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `HOST_PORT` | `8000` | Port on your computer |
+| `UVICORN_LOG_LEVEL` | `info` | Log detail (`debug`, `info`, `warning`) |
+
+### About the image
+
+The Dockerfile is a multi-stage build on `python:3.12-slim`. The container runs as a non-root user and has a health check on `/health`.
+
+## Continuous Integration
+
+The workflow in `.github/workflows/ci.yml` runs on every push to a branch other than `main` and on every pull request to `main`. It has three jobs:
+
+- **lint**: `ruff check .`
+- **test**: `pytest`
+- **docker-build**: builds the Docker image and checks that the container answers on `/health`
+
+All three must pass before a pull request can be merged into `main`.
+
 ## Project Structure
 
 ```text
 .
-├── .github/                  # CODEOWNERS and PR template
-├── docs/                     # Setup documentation
+├── .github/
+│   ├── workflows/ci.yml          # CI pipeline (lint, test, Docker build)
+│   ├── CODEOWNERS
+│   └── pull_request_template.md
+├── docs/                         # Setup documentation
 ├── services/
-│   └── price-service/        # Price API (one service, more planned)
-│       ├── app/              # Routes, models, repository, sample data
-│       ├── tests/            # pytest tests
-│       ├── requirements.txt       # runtime dependencies
-│       └── requirements-dev.txt   # tests and linting
+│   └── price-service/            # Price API (one service, more planned)
+│       ├── app/                  # Routes, models, repository, sample data
+│       ├── tests/                # pytest tests
+│       ├── requirements.txt      # runtime dependencies
+│       └── requirements-dev.txt  # tests and linting
+├── .dockerignore
+├── .env.example
+├── Dockerfile
+├── docker-compose.yml
+├── ruff.toml
 ├── LICENSE
 └── README.md
 ```
