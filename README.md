@@ -160,14 +160,22 @@ All three must pass before a pull request can be merged into `main`.
 
 ```text
 .
-├── .github/                  # CODEOWNERS and PR template
-├── docs/                     # Setup documentation
+├── .github/
+│   ├── workflows/ci.yml          # CI pipeline (lint, test, Docker build)
+│   ├── CODEOWNERS
+│   └── pull_request_template.md
+├── docs/                         # Setup documentation
 ├── services/
-│   └── price-service/        # Price API (one service, more planned)
-│       ├── app/              # Routes, models, repository, sample data
-│       ├── tests/            # pytest tests
-│       ├── requirements.txt       # runtime dependencies
-│       └── requirements-dev.txt   # tests and linting
+│   └── price-service/            # Price API (one service, more planned)
+│       ├── app/                  # Routes, models, repository, sample data
+│       ├── tests/                # pytest tests
+│       ├── requirements.txt      # runtime dependencies
+│       └── requirements-dev.txt  # tests and linting
+├── .dockerignore
+├── .env.example
+├── Dockerfile
+├── docker-compose.yml
+├── ruff.toml
 ├── LICENSE
 └── README.md
 ```
