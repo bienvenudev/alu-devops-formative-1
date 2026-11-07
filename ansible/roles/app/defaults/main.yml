@@ -1,0 +1,6 @@
+---
+app_repo_url: https://github.com/bienvenudev/alu-devops-formative-1.git
+app_version: main
+app_dir: /opt/isoko
+app_host_port: 8000
+app_log_level: info
