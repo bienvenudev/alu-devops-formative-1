@@ -19,3 +19,19 @@
     owner: root
     group: root
     mode: "0640"
+
+- name: Build and start the application
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_dir }}"
+    build: always
+    state: present
+
+- name: Wait for the health endpoint
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ app_host_port }}/health"
+    status_code: 200
+  register: app_health
+  until: app_health.status == 200
+  retries: 15
+  delay: 4
+  changed_when: false
