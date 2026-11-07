@@ -1,0 +1,4 @@
+---
+- name: Placeholder until the security role is written
+  ansible.builtin.debug:
+    msg: "The security role has no tasks yet"

@@ -1,0 +1,5 @@
+aws_region       = "eu-west-1"
+project_name     = "isoko"
+environment      = "dev"
+allowed_ssh_cidr = "203.0.113.10/32"
+ssh_public_key   = "ssh-ed25519 AAAAC3Nza-REPLACE-WITH-YOUR-PUBLIC-KEY you@example.com"

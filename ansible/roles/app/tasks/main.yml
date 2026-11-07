@@ -1,0 +1,4 @@
+---
+- name: Placeholder until the app role is written
+  ansible.builtin.debug:
+    msg: "The app role has no tasks yet"
