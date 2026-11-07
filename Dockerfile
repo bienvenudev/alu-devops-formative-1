@@ -8,6 +8,10 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # Final stage: a small image that only holds the packages and the app code
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# Apply the security updates released since the base image was built
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 # Run as a normal user instead of root
 RUN useradd --create-home --uid 10001 appuser
 WORKDIR /app
