@@ -1,0 +1,4 @@
+---
+- name: Placeholder until the docker role is written
+  ansible.builtin.debug:
+    msg: "The docker role has no tasks yet"
