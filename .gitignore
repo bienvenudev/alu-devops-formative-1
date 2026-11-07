@@ -371,3 +371,26 @@ $RECYCLE.BIN/
 *.tfstate
 *.tfstate.*
 *.tfvars
+
+# Terraform extras
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+.terraformrc
+terraform.rc
+
+# Ansible
+*.retry
+.vault_pass
+*.vault_pass
+ansible/inventory/*.local.ini
+
+# SSH private keys
+isoko-key
+isoko-key.*
+!isoko-key.pub
+id_rsa
+id_ed25519
