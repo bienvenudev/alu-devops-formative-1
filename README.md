@@ -177,19 +177,22 @@ In short, `terraform apply` creates the server, then `ansible-playbook` makes it
 ```text
 .
 ├── .github/
-│   ├── workflows/ci.yml          # CI pipeline (lint, test, Docker build)
+│   ├── workflows/ci.yml          # CI pipeline (lint, tests, Docker build, security scans, IaC checks)
 │   ├── CODEOWNERS
 │   └── pull_request_template.md
-├── docs/                         # Setup documentation
+├── ansible/                      # Server configuration (roles: docker, app, security)
+├── docs/                         # Setup documentation and F3 contract
 ├── services/
 │   └── price-service/            # Price API (one service, more planned)
 │       ├── app/                  # Routes, models, repository, sample data
 │       ├── tests/                # pytest tests
 │       ├── requirements.txt      # runtime dependencies
 │       └── requirements-dev.txt  # tests and linting
+├── terraform/                    # AWS infrastructure (VPC, security group, server)
 ├── .dockerignore
 ├── .env.example
 ├── Dockerfile
+├── SECURITY.md                   # Security scans, findings and accepted risks
 ├── docker-compose.yml
 ├── ruff.toml
 ├── LICENSE
