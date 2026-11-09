@@ -203,7 +203,7 @@ In short, `terraform apply` creates the server, then `ansible-playbook` makes it
 
 **Branch protection on main:** a pull request is required, with at least 1 approval from someone other than the author. Stale approvals are dismissed when new commits are pushed, conversations must be resolved, and the rules apply to administrators too. Branches must be up to date with `main` before merging, so the checks always run against the latest code. This prevents accidental direct pushes and makes sure every change is reviewed.
 
-**Required status checks:** the CI jobs `lint`, `test` and `docker-build` must pass before a pull request can be merged. This blocks code with style errors, failing tests or a broken Docker build from reaching `main`.
+**Required status checks:** the CI jobs `lint`, `test`, `docker-build`, `dependency-scan`, `image-scan`, `iac-scan`, `terraform-validate` and `ansible-check` must pass before a pull request can be merged. This blocks style errors, failing tests, a broken Docker build, vulnerable dependencies or images, and risky infrastructure settings from reaching `main`.
 
 **Secrets:** `.gitignore` excludes `.env` files, keys and local config so credentials are never committed.
 
