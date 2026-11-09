@@ -148,32 +148,51 @@ The Dockerfile is a multi-stage build on `python:3.12-slim`. The container runs 
 
 ## Continuous Integration
 
-The workflow in `.github/workflows/ci.yml` runs on every push to a branch other than `main` and on every pull request to `main`. It has three jobs:
+The workflow in `.github/workflows/ci.yml` runs on every push to a branch other than `main` and on every pull request to `main`. It has eight jobs:
 
-- **lint**: `ruff check .`
-- **test**: `pytest`
-- **docker-build**: builds the Docker image and checks that the container answers on `/health`
+| Job | What it checks |
+| --- | --- |
+| `lint` | Python style with `ruff` |
+| `test` | The `pytest` tests |
+| `docker-build` | Builds the Docker image and checks that the container answers on `/health` |
+| `dependency-scan` | Known vulnerabilities in the Python packages (`pip-audit`) |
+| `image-scan` | Known vulnerabilities in the Docker image (Trivy) |
+| `iac-scan` | Risky settings in the Terraform files (Checkov) |
+| `terraform-validate` | Terraform formatting and syntax |
+| `ansible-check` | Ansible syntax and style (`ansible-lint`) |
 
-All three must pass before a pull request can be merged into `main`.
+All of them must pass before a pull request can be merged into `main`. Our findings and how we fixed them are in [SECURITY.md](SECURITY.md).
+
+## Infrastructure and Deployment
+
+The infrastructure is described as code, in two steps:
+
+1. **Terraform** (`terraform/`) creates the AWS resources: a VPC with a public subnet, internet gateway and route table, a security group, and one Ubuntu server with an Elastic IP. See [terraform/README.md](terraform/README.md).
+2. **Ansible** (`ansible/`) configures that server: it installs Docker, deploys the service with `docker compose`, and secures the server with a firewall and SSH hardening. See [ansible/README.md](ansible/README.md).
+
+In short, `terraform apply` creates the server, then `ansible-playbook` makes it run Isoko. Security scans (dependencies, Docker image and Terraform) run in CI on every pull request. Their findings are documented in [SECURITY.md](SECURITY.md).
 
 ## Project Structure
 
 ```text
 .
 ├── .github/
-│   ├── workflows/ci.yml          # CI pipeline (lint, test, Docker build)
+│   ├── workflows/ci.yml          # CI pipeline (lint, tests, Docker build, security scans, IaC checks)
 │   ├── CODEOWNERS
 │   └── pull_request_template.md
-├── docs/                         # Setup documentation
+├── ansible/                      # Server configuration (roles: docker, app, security)
+├── docs/                         # Setup documentation and F3 contract
 ├── services/
 │   └── price-service/            # Price API (one service, more planned)
 │       ├── app/                  # Routes, models, repository, sample data
 │       ├── tests/                # pytest tests
 │       ├── requirements.txt      # runtime dependencies
 │       └── requirements-dev.txt  # tests and linting
+├── terraform/                    # AWS infrastructure (VPC, security group, server)
 ├── .dockerignore
 ├── .env.example
 ├── Dockerfile
+├── SECURITY.md                   # Security scans, findings and accepted risks
 ├── docker-compose.yml
 ├── ruff.toml
 ├── LICENSE
