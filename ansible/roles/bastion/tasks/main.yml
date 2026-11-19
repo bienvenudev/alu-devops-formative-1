@@ -1,0 +1,4 @@
+---
+- name: Placeholder until the bastion role is written
+  ansible.builtin.debug:
+    msg: "The bastion role has no tasks yet"

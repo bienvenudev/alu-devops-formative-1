@@ -1,0 +1,7 @@
+---
+security_open_ports:
+  - 22
+  - 80
+security_allowed_source: any
+security_allow_routed: true
+bastion_upstream_host: "{{ hostvars['isoko-app'].ansible_host }}"
