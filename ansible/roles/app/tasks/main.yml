@@ -1,37 +1,65 @@
 ---
-- name: Install git
-  ansible.builtin.apt:
-    name: git
-    state: present
-    update_cache: true
-    cache_valid_time: 3600
+- name: Check that the required settings are present
+  ansible.builtin.assert:
+    that:
+      - app_image | length > 0
+      - app_db_host | length > 0
+      - app_db_password | length > 0
+    fail_msg: "Set app_image, app_db_host and app_db_password"
+    quiet: true
+  no_log: true
 
-- name: Clone or update the application repository
-  ansible.builtin.git:
-    repo: "{{ app_repo_url }}"
-    dest: "{{ app_dir }}"
-    version: "{{ app_version }}"
+- name: Create the application folder
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_owner }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+
+- name: Log in to the container registry
+  ansible.builtin.command: docker login --username AWS --password-stdin {{ app_ecr_registry }}
+  args:
+    stdin: "{{ app_ecr_password }}"
+  no_log: true
+  changed_when: false
+  when: app_ecr_registry | length > 0
 
 - name: Write the .env file
   ansible.builtin.template:
     src: env.j2
     dest: "{{ app_dir }}/.env"
-    owner: root
-    group: root
-    mode: "0640"
+    owner: "{{ app_owner }}"
+    group: "{{ app_group }}"
+    mode: "0600"
+  no_log: true
+  notify: Restart the application
 
-- name: Build and start the application
+- name: Write the compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_dir }}/docker-compose.yml"
+    owner: "{{ app_owner }}"
+    group: "{{ app_group }}"
+    mode: "0644"
+
+- name: Pull the image and start the application
   community.docker.docker_compose_v2:
     project_src: "{{ app_dir }}"
-    build: always
+    pull: "{{ app_pull_policy }}"
+    remove_orphans: true
     state: present
 
-- name: Wait for the health endpoint
+- name: Wait until the application and its database are ready
   ansible.builtin.uri:
-    url: "http://127.0.0.1:{{ app_host_port }}/health"
+    url: "http://127.0.0.1:{{ app_host_port }}/ready"
     status_code: 200
-  register: app_health
-  until: app_health.status == 200
-  retries: 15
-  delay: 4
+  register: app_ready
+  until: app_ready.status == 200
+  retries: 20
+  delay: 5
+  changed_when: false
+
+- name: Remove old images that are no longer used
+  ansible.builtin.command: docker image prune --force
   changed_when: false
