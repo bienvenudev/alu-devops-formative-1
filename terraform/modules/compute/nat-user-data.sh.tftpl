@@ -1,0 +1,36 @@
+#!/bin/bash
+set -eux
+
+%{ if enable_nat ~}
+command -v iptables >/dev/null || apt-get install -y iptables
+
+cat > /etc/sysctl.d/99-nat.conf <<'SYSCTL'
+net.ipv4.ip_forward = 1
+SYSCTL
+sysctl --system
+
+cat > /usr/local/sbin/isoko-nat.sh <<'SCRIPT'
+#!/bin/sh
+IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
+iptables -t nat -C POSTROUTING -o "$IFACE" -s ${vpc_cidr} -j MASQUERADE 2>/dev/null || iptables -t nat -A POSTROUTING -o "$IFACE" -s ${vpc_cidr} -j MASQUERADE
+SCRIPT
+chmod 0755 /usr/local/sbin/isoko-nat.sh
+
+cat > /etc/systemd/system/isoko-nat.service <<'UNIT'
+[Unit]
+Description=NAT for the private subnets
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/isoko-nat.sh
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable --now isoko-nat.service
+%{ endif ~}
