@@ -1,0 +1,4 @@
+---
+bastion_upstream_host: ""
+bastion_upstream_port: 8000
+bastion_nat_instance: true

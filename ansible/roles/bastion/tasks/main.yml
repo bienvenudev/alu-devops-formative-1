@@ -1,4 +1,73 @@
 ---
-- name: Placeholder until the bastion role is written
-  ansible.builtin.debug:
-    msg: "The bastion role has no tasks yet"
+- name: Check that the upstream address is set
+  ansible.builtin.assert:
+    that:
+      - bastion_upstream_host | length > 0
+    fail_msg: "Set bastion_upstream_host to the private IP of the application server"
+    quiet: true
+
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Remove the default nginx site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload nginx
+
+- name: Write the reverse proxy configuration
+  ansible.builtin.template:
+    src: isoko.conf.j2
+    dest: /etc/nginx/sites-available/isoko.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Enable the reverse proxy configuration
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/isoko.conf
+    dest: /etc/nginx/sites-enabled/isoko.conf
+    state: link
+  notify: Reload nginx
+
+- name: Check the nginx configuration
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+- name: Start nginx and enable it at boot
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Read the IP forwarding setting
+  ansible.builtin.command: sysctl -n net.ipv4.ip_forward
+  register: bastion_ip_forward
+  changed_when: false
+  when: bastion_nat_instance
+
+- name: Check that IP forwarding is on so the private subnets have internet access
+  ansible.builtin.assert:
+    that:
+      - bastion_ip_forward.stdout | trim == "1"
+    fail_msg: "IP forwarding is off, so the NAT instance cannot forward traffic"
+    quiet: true
+  when: bastion_nat_instance
+
+- name: Flush handlers so that nginx has the final configuration
+  ansible.builtin.meta: flush_handlers
+
+- name: Check that nginx answers locally
+  ansible.builtin.uri:
+    url: http://127.0.0.1/nginx-health
+    status_code: 200
+  register: bastion_nginx_health
+  until: bastion_nginx_health.status == 200
+  retries: 5
+  delay: 2
+  changed_when: false
