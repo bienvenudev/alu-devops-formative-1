@@ -80,6 +80,19 @@ The final scan shows **157 rules passed, 0 failed and 16 skipped**. Every skip h
 | CKV_AWS_149 | Database secret | The AWS-managed key is used. A customer-managed key adds cost. |
 | CKV2_AWS_57 | Database secret | Automatic rotation needs a Lambda function. The password is rotated by hand, so that an automatic rotation can never break the running service. |
 
+### Summative: dependencies and image
+
+- Adding PostgreSQL support brought two packages: `psycopg 3.3.9` and `psycopg-pool 3.3.3`. `pip-audit` reports no known vulnerabilities for the full list.
+- The image scan of the final image (Trivy v0.70.0) reports 0 HIGH and 0 CRITICAL vulnerabilities with a fix. The same scan runs in the CD pipeline before the image is pushed, so a vulnerable image is never deployed.
+- The private registry scans every pushed image as well (`scan_on_push`), tags are immutable, and only the last ten images are kept.
+
+### Summative: controls in the design
+
+- **Network:** only the bastion is public. The application server and the database are in private subnets. The database accepts connections only from the application server, and only with SSL.
+- **Access:** SSH uses keys only and is allowed from one admin address. The CD pipeline opens SSH for its own address during a deployment and closes it again afterwards. The role it uses can only touch the bastion security group.
+- **Pipeline credentials:** GitHub Actions logs in to AWS with OIDC and short-lived credentials. Only the `main` branch of this repository can assume the role. No AWS keys are stored in GitHub.
+- **Secrets:** the database password is generated, stored in Secrets Manager and written to the server with file mode 0600. It is hidden from the pipeline logs. The only secret stored in GitHub is the deployment SSH key.
+
 ## Other known risks we accept
 
 - **No HTTPS.** The service is served over plain HTTP by nginx on the bastion and only returns sample data. A production version should use HTTPS behind a load balancer.
