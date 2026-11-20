@@ -1,0 +1,6 @@
+---
+security_open_ports:
+  - 22
+  - 8000
+security_allowed_source: "{{ isoko_vpc_cidr }}"
+security_allow_routed: false

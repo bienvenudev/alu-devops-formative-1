@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import date
 from pathlib import Path
 
@@ -9,6 +10,8 @@ DATA_FILE = Path(__file__).parent / "data" / "prices.json"
 
 class PriceRepository:
     """Loads prices from a JSON file and answers queries about them."""
+
+    name = "json"
 
     def __init__(self, data_file: Path = DATA_FILE):
         with open(data_file, encoding="utf-8") as f:
@@ -34,3 +37,16 @@ class PriceRepository:
         )
         self._prices.append(price)
         return price
+
+    def ping(self) -> bool:
+        return True
+
+
+def create_repository():
+    """Use PostgreSQL when DATABASE_URL is set, otherwise the JSON file."""
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        from app.postgres_repository import PostgresPriceRepository
+
+        return PostgresPriceRepository(database_url)
+    return PriceRepository()

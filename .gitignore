@@ -394,3 +394,12 @@ isoko-key.*
 !isoko-key.pub
 id_rsa
 id_ed25519
+
+# Summative: Terraform and Ansible local files
+terraform/modules/**/.terraform.lock.hcl
+.terraform-plugin-cache/
+*.auto.tfvars
+*.auto.tfvars.json
+tfplan
+deploy_vars.json
+ansible/inventory/*.local.yml

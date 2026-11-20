@@ -1,6 +1,13 @@
 ---
-- name: Configure the Isoko server
-  hosts: isoko
+- name: Configure the bastion (public entry point and NAT instance)
+  hosts: bastion
+  become: true
+  roles:
+    - security
+    - bastion
+
+- name: Configure the application server
+  hosts: app
   become: true
   roles:
     - docker
