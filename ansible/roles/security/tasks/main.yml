@@ -19,6 +19,13 @@
   loop: "{{ security_open_ports }}"
   tags: [firewall]
 
+- name: Allow forwarded traffic so that the server can act as a NAT instance
+  community.general.ufw:
+    default: allow
+    direction: routed
+  when: security_allow_routed
+  tags: [firewall]
+
 - name: Deny all other incoming traffic and enable the firewall
   community.general.ufw:
     state: enabled

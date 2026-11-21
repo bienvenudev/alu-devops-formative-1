@@ -3,3 +3,4 @@ security_ssh_port: 22
 security_open_ports:
   - 22
 security_allowed_source: any
+security_allow_routed: false
