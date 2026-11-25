@@ -115,6 +115,12 @@ variable "github_repository" {
   default     = "bienvenudev/alu-devops-formative-1"
 }
 
+variable "github_subject_repository" {
+  description = "Repository part of the token subject when GitHub uses the immutable form, for example owner@id/name@id. Leave empty if not needed."
+  type        = string
+  default     = ""
+}
+
 variable "create_oidc_provider" {
   description = "Create the GitHub OIDC provider. Set to false if the AWS account already has one."
   type        = bool

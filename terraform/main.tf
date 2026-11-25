@@ -62,11 +62,12 @@ module "compute" {
 module "github_oidc" {
   source = "./modules/github_oidc"
 
-  project_name         = var.project_name
-  environment          = var.environment
-  github_repository    = var.github_repository
-  create_oidc_provider = var.create_oidc_provider
-  ecr_repository_arn   = module.registry.repository_arn
-  db_secret_arn        = module.database.db_secret_arn
-  bastion_sg_arn       = module.security.bastion_sg_arn
+  project_name              = var.project_name
+  environment               = var.environment
+  github_repository         = var.github_repository
+  github_subject_repository = var.github_subject_repository
+  create_oidc_provider      = var.create_oidc_provider
+  ecr_repository_arn        = module.registry.repository_arn
+  db_secret_arn             = module.database.db_secret_arn
+  bastion_sg_arn            = module.security.bastion_sg_arn
 }
