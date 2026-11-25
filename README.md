@@ -2,7 +2,7 @@
 
 > Know the price before you go to market.
 
-**Live application:** _added here after the first deployment_ (`terraform output app_url` prints it)
+**Live application:** http://54.73.218.151 (`/docs` for the API, `/ready` for the readiness check; `terraform output app_url` prints the address)
 
 Isoko is a small price service for crops in Rwandan markets, built as a complete DevOps project: it is provisioned with Terraform, configured with Ansible, checked by a CI pipeline with security scans, and deployed automatically to AWS by a CD pipeline on every merge to `main`.
 
