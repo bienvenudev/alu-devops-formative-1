@@ -13,6 +13,12 @@ variable "github_repository" {
   type        = string
 }
 
+variable "github_subject_repository" {
+  description = "Repository part of the token subject when GitHub uses the immutable form, for example owner@id/name@id. Leave empty to use github_repository only."
+  type        = string
+  default     = ""
+}
+
 variable "github_branch" {
   description = "Branch whose workflow runs are allowed to deploy"
   type        = string
