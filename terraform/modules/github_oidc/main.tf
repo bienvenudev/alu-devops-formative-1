@@ -4,6 +4,10 @@ data "aws_partition" "current" {}
 
 locals {
   oidc_url = "token.actions.githubusercontent.com"
+  subjects = compact([
+    "repo:${var.github_repository}:ref:refs/heads/${var.github_branch}",
+    var.github_subject_repository == "" ? "" : "repo:${var.github_subject_repository}:ref:refs/heads/${var.github_branch}",
+  ])
   oidc_provider_arn = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : (
     "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_url}"
   )
@@ -35,7 +39,7 @@ data "aws_iam_policy_document" "assume" {
     condition {
       test     = "StringEquals"
       variable = "${local.oidc_url}:sub"
-      values   = ["repo:${var.github_repository}:ref:refs/heads/${var.github_branch}"]
+      values   = local.subjects
     }
   }
 }
