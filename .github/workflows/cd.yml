@@ -1,0 +1,136 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  build-and-push:
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - id: meta
+        run: |
+          version="${GITHUB_SHA::7}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "image=${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:$version" >> "$GITHUB_OUTPUT"
+      - name: Build the image
+        run: docker build --build-arg APP_VERSION="${{ steps.meta.outputs.version }}" -t "${{ steps.meta.outputs.image }}" .
+      - name: Scan the image before it is pushed
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ steps.meta.outputs.image }}
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Push the image to the private registry
+        run: |
+          if aws ecr describe-images --repository-name "${{ vars.ECR_REPOSITORY }}" --image-ids imageTag="${{ steps.meta.outputs.version }}" >/dev/null 2>&1; then
+            echo "This commit is already in the registry, nothing to push"
+          else
+            docker push "${{ steps.meta.outputs.image }}"
+          fi
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      BASTION_PUBLIC_IP: ${{ vars.BASTION_PUBLIC_IP }}
+      APP_PRIVATE_IP: ${{ vars.APP_PRIVATE_IP }}
+    steps:
+      - name: Choose where the temporary secret files live
+        run: |
+          echo "ISOKO_SSH_KEY=$RUNNER_TEMP/deploy_key" >> "$GITHUB_ENV"
+          echo "ANSIBLE_VARS_FILE=$RUNNER_TEMP/deploy_vars.json" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Ansible
+        run: |
+          pip install ansible-core==2.21.6
+          ansible-galaxy collection install -r ansible/requirements.yml
+      - name: Prepare the SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -m 600 /dev/null "$ISOKO_SSH_KEY"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ISOKO_SSH_KEY"
+      - name: Open SSH on the bastion for this runner only
+        run: |
+          runner_ip="$(curl -s https://checkip.amazonaws.com | tr -d '[:space:]')"
+          echo "RUNNER_IP=$runner_ip" >> "$GITHUB_ENV"
+          aws ec2 authorize-security-group-ingress \
+            --group-id "${{ vars.BASTION_SG_ID }}" \
+            --protocol tcp --port 22 --cidr "$runner_ip/32"
+      - name: Collect the registry token and the database password
+        run: |
+          registry_password="$(aws ecr get-login-password)"
+          echo "::add-mask::$registry_password"
+          db_password="$(aws secretsmanager get-secret-value --secret-id "${{ vars.DB_SECRET_ARN }}" --query SecretString --output text | jq -r .password)"
+          echo "::add-mask::$db_password"
+          install -m 600 /dev/null "$ANSIBLE_VARS_FILE"
+          jq -n \
+            --arg image "${{ needs.build-and-push.outputs.image }}" \
+            --arg version "${{ needs.build-and-push.outputs.version }}" \
+            --arg registry "${{ vars.ECR_REGISTRY }}" \
+            --arg registry_password "$registry_password" \
+            --arg db_host "${{ vars.DB_ADDRESS }}" \
+            --arg db_password "$db_password" \
+            '{app_image: $image, app_version: $version, app_ecr_registry: $registry, app_ecr_password: $registry_password, app_db_host: $db_host, app_db_password: $db_password}' \
+            > "$ANSIBLE_VARS_FILE"
+      - name: Wait until the bastion accepts the connection
+        run: ansible bastion -m ansible.builtin.wait_for_connection -a "timeout=180"
+        working-directory: ansible
+      - name: Run the Ansible playbook
+        run: ansible-playbook site.yml -e "@$ANSIBLE_VARS_FILE"
+        working-directory: ansible
+      - name: Check the live service
+        run: |
+          curl --fail --silent --show-error --retry 10 --retry-delay 5 --retry-all-errors "http://$BASTION_PUBLIC_IP/ready"
+          echo
+          curl --fail --silent --show-error "http://$BASTION_PUBLIC_IP/prices/cheapest?crop=maize"
+          echo
+      - name: Close SSH on the bastion and remove the secrets
+        if: always()
+        run: |
+          if [ -n "${RUNNER_IP:-}" ]; then
+            aws ec2 revoke-security-group-ingress \
+              --group-id "${{ vars.BASTION_SG_ID }}" \
+              --protocol tcp --port 22 --cidr "$RUNNER_IP/32" || true
+          fi
+          rm -f "$ISOKO_SSH_KEY" "$ANSIBLE_VARS_FILE"
