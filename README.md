@@ -239,6 +239,8 @@ The workflow [`cd.yml`](.github/workflows/cd.yml) runs when a pull request is me
 2. **`build-and-push`** logs in to AWS through OIDC, builds the image, scans it with Trivy, and pushes it to the private registry with the git commit as the tag.
 3. **`deploy`** opens SSH on the bastion for the runner's address only, collects the registry token and the database password, runs the Ansible playbook through the bastion, checks that the live service answers on `/ready` and `/prices/cheapest`, and then closes SSH again and removes the temporary secret files.
 
+After a deployment, the `version` field returned by `/ready` is the git commit that is running, so it should equal the commit that was just merged.
+
 Only one deployment runs at a time. The pipeline fails, and the old version keeps running, if a check, the scan, the push or the playbook fails.
 
 ## Operations Manual
